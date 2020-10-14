@@ -1,17 +1,12 @@
 #!/bin/bash
 
-if [ -z "$DB_ADDRESS" ]; then
-    DB_ADDRESS="127.0.0.1"
-fi
-
-if [ -z "$DB_AUTH" ]; then
-    DB_AUTH=":"
-fi
-AUTH=$(echo $DB_AUTH | tr ":" "\n")
-
-mongodump -u "${AUTH[0]}" -p "${AUTH[1]}" -h ${DB_ADDRESS} -d e-flex --excludeCollection auth_states --excludeCollection errors --excludeCollection users
+mongodump --uri "mongodb://${DB_AUTH}@${DB_ADDRESS}/e-flex" --excludeCollection auth_states --excludeCollection errors --excludeCollection users
 
 # remove expiration from users, which contains sensible login info
-mongoexport -u "${AUTH[0]}" -p "${AUTH[1]}" -h ${DB_ADDRESS} -d e-flex -c users | sed s/,\"expiration\":{[^}]*}//g > dump/e-flex/users.json
+mongoexport --uri "mongodb://${DB_AUTH}@${DB_ADDRESS}/e-flex" -c users | sed s/,\"expiration\":{[^}]*}//g > dump/e-flex/users.json
 
-mv dump/e-flex dump/`date +%Y-%m-%d`
+DEST=dump/`date +%Y-%m-%d`
+if [ -e $DEST ]; then
+    rm -fr $DEST
+fi
+mv dump/e-flex $DEST
