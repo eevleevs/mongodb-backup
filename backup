@@ -13,3 +13,5 @@ mongodump -u "${AUTH[0]}" -p "${AUTH[1]}" -h ${DB_ADDRESS} -d e-flex --excludeCo
 
 # remove expiration from users, which contains sensible login info
 mongoexport -u "${AUTH[0]}" -p "${AUTH[1]}" -h ${DB_ADDRESS} -d e-flex -c users | sed s/,\"expiration\":{[^}]*}//g > dump/e-flex/users.json
+
+mv dump/e-flex dump/`date +%Y-%m-%d`
