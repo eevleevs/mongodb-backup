@@ -1,0 +1,4 @@
+- provide env variables
+    - `DB_AUTH` user:password
+    - `DB_ADDRESS`
+- mount persistent volume on `/app/dump`
